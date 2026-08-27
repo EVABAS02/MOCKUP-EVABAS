@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup Studio Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body class="bg-[#020604] p-5 flex justify-center text-[#EBF2FA] font-mono">
+
+  <div id="mk4DropZone" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#05100C]/90 backdrop-blur-sm border-4 border-dashed border-[#FBB02D]">
+    <div class="text-3xl font-bold text-[#FBB02D]">Relâche ta capture ici</div>
+  </div>
+
+  <div class="mk4-root">
+    <div class="mk4-sidebar">
+      <div class="mk4-brand"><span class="mk4-brand-dot"></span>MOCKUP EVABAS</div>
+
+      <div>
+        <div class="mk4-label">01 — Image Source</div>
+        <label class="mk4-upload">
+          <input type="file" id="mk4File" accept="image/*" />
+          <div class="mk4-upload-text" id="mk4UploadText"><b>Glisse ou clique ici</b><br/>pour charger une capture</div>
+        </label>
+      </div>
+
+      <div>
+        <div class="mk4-label">02 — Mode de Rendu</div>
+        <select class="mk4-input" id="mk4Mode">
+          <option value="device">1. Device Simple</option>
+          <option value="fullpage">2. Page Longue (Nav au Footer)</option>
+          <option value="presentation">3. Présentation Pro (Style CarlDev)</option>
+          <option value="trio">4. Trio Responsive (3 Écrans)</option>
+        </select>
+        
+        <label class="flex items-center gap-2 mt-3 cursor-pointer">
+          <input type="checkbox" id="mk4GlassToggle" class="w-4 h-4 rounded text-[#FBB02D] bg-[#12241C] border-[#1B3B2B]">
+          <span class="text-[12px] font-medium text-[#A5D6A7]">Effet Glassmorphism</span>
+        </label>
+      </div>
+
+      <div id="mk4DeviceBox">
+        <div class="mk4-label">03 — Format Écran</div>
+        <div class="mk4-row" id="mk4Devices">
+          <button type="button" class="mk4-btn-opt active" data-device="desktop">Desktop <span class="mono">1440×900</span></button>
+          <button type="button" class="mk4-btn-opt" data-device="android">Mobile <span class="mono">390×844</span></button>
+        </div>
+      </div>
+
+      <div id="mk4PaletteBox" style="display:none;">
+        <div class="mk4-label">Ambiance Couleur <span class="mk4-count" id="mk4PalCount"></span></div>
+        <div class="mk4-pal-list" id="mk4Palettes"></div>
+      </div>
+
+      <div id="mk4PresFields" style="display:none;" class="flex-col gap-2">
+        <div class="mk4-label">Textes & Signature</div>
+        <input class="mk4-input" id="mk4Author" placeholder="Nom de l'auteur" value="Carlos Djanato" />
+        <input class="mk4-input" id="mk4Badge" placeholder="Badge" value="Site Web" />
+        <textarea class="mk4-input" id="mk4Title" rows="2" placeholder="Titre">Créateur De Sites Internet</textarea>
+      </div>
+
+      <button class="mk4-export" id="mk4ExportBtn" disabled>Exporter le rendu (.PNG)</button>
+    </div>
+
+    <div class="mk4-stage">
+      <canvas class="mk4-canvas" id="mk4Canvas"></canvas>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
