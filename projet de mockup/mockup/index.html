@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mockup Studio Pro - Outil de création de mockups professionnels pour développeurs et designers. Générez des présentations élégantes pour vos captures d'écran.">
+  <meta name="keywords" content="mockup, design, développement web, capture d'écran, présentation, device mockup">
+  <meta name="author" content="EVABAS">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Mockup Studio Pro">
+  <meta property="og:description" content="Outil de création de mockups professionnels pour développeurs et designers.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Mockup Studio Pro">
+  <title>Mockup Studio Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="style.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+  <noscript><link href="style.css" rel="stylesheet"></noscript>
+  <script src="https://cdn.tailwindcss.com" defer></script>
+</head>
+<body>
+  <!-- Skip to main content for accessibility -->
+  <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+  <!-- Hamburger Menu Button -->
+  <button class="mk4-menu-toggle" id="mk4MenuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mk4Sidebar">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+
+  <!-- Overlay -->
+  <div class="mk4-overlay" id="mk4Overlay" role="dialog" aria-modal="true" aria-hidden="true"></div>
+
+  <!-- Drop Zone -->
+  <div class="mk4-dropzone" id="mk4DropZone" role="region" aria-label="Zone de dépôt de fichiers">
+    <div class="mk4-dropzone-text">Relâche ta capture ici</div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="mk4-root" role="application" aria-label="Mockup Studio Pro">
+    <!-- Sidebar -->
+    <aside class="mk4-sidebar" id="mk4Sidebar" role="complementary" aria-label="Panneau de contrôle">
+      <nav aria-label="Navigation principale">
+        <!-- Brand -->
+        <div class="mk4-brand">
+          <span class="mk4-brand-dot" aria-hidden="true"></span>
+          <span class="sr-only">Mockup Evabas - </span>MOCKUP EVABAS
+        </div>
+
+        <!-- Image Upload -->
+        <section>
+          <label class="mk4-label" id="mk4FileLabel">01 — Image Source</label>
+          <label class="mk4-upload" for="mk4File">
+            <input type="file" id="mk4File" accept="image/*" aria-labelledby="mk4FileLabel mk4UploadText" />
+            <div class="mk4-upload-text" id="mk4UploadText">
+              <b>Glisse ou clique ici</b><br/>pour charger une capture
+            </div>
+          </label>
+        </section>
+
+        <!-- Render Mode -->
+        <section>
+          <label class="mk4-label" id="mk4ModeLabel">02 — Mode de Rendu</label>
+          <label for="mk4Mode" class="sr-only">Sélectionnez un mode de rendu</label>
+          <select class="mk4-input" id="mk4Mode" aria-labelledby="mk4ModeLabel" aria-label="Mode de rendu">
+            <option value="device">1. Device Simple</option>
+            <option value="fullpage">2. Page Longue (Nav au Footer)</option>
+            <option value="presentation">3. Présentation Pro (Style CarlDev)</option>
+            <option value="trio">4. Trio Responsive (3 Écrans)</option>
+          </select>
+        
+        <label class="mk4-checkbox-label mk4-glass-toggle">
+          <input type="checkbox" id="mk4GlassToggle" class="mk4-checkbox" aria-label="Activer l'effet Glassmorphism">
+          <span>Effet Glassmorphism</span>
+        </label>
+      </nav>
+
+      <!-- Device Selection -->
+      <section id="mk4DeviceBox">
+        <fieldset>
+          <legend class="mk4-label" id="mk4DeviceLabel">03 — Format Écran</legend>
+          <div class="mk4-row" id="mk4Devices" role="radiogroup" aria-labelledby="mk4DeviceLabel">
+            <button type="button" class="mk4-btn-opt active" data-device="desktop" aria-label="Format Desktop 1440 par 900">
+              Desktop <span class="mono">1440×900</span>
+            </button>
+            <button type="button" class="mk4-btn-opt" data-device="android" aria-label="Format Mobile 390 par 844">
+              Mobile <span class="mono">390×844</span>
+            </button>
+          </div>
+        </fieldset>
+      </section>
+
+      <!-- Color Palettes -->
+      <section id="mk4PaletteBox" style="display:none;" aria-labelledby="mk4PaletteLabel">
+        <label class="mk4-label" id="mk4PaletteLabel">
+          Ambiance Couleur <span class="mk4-count" id="mk4PalCount"></span>
+        </label>
+        <div class="mk4-pal-list" id="mk4Palettes" role="list" aria-label="Liste des palettes de couleurs"></div>
+      </section>
+
+      <!-- Presentation Fields -->
+      <section id="mk4PresFields" style="display:none;" class="flex-col gap-2" aria-labelledby="mk4PresLabel">
+        <label class="mk4-label" id="mk4PresLabel">Textes & Signature</label>
+        <label for="mk4Author" class="sr-only">Nom de l'auteur</label>
+        <input class="mk4-input" id="mk4Author" placeholder="Nom de l'auteur" value="EVABAS" aria-label="Nom de l'auteur" />
+        <label for="mk4Badge" class="sr-only">Badge</label>
+        <input class="mk4-input" id="mk4Badge" placeholder="Badge" value="Site Web" aria-label="Texte du badge" />
+        <label for="mk4Title" class="sr-only">Titre</label>
+        <textarea class="mk4-input" id="mk4Title" rows="2" placeholder="Titre" aria-label="Titre du projet">Créateur De Sites Internet</textarea>
+      </section>
+
+      <!-- Export Button -->
+      <button class="mk4-export" id="mk4ExportBtn" disabled aria-label="Exporter le rendu en format PNG">
+        Exporter le rendu (.PNG)
+      </button>
+    </aside>
+
+    <!-- Stage -->
+    <main class="mk4-stage" id="main-content" role="main" aria-label="Zone de rendu du mockup">
+      <canvas class="mk4-canvas" id="mk4Canvas" role="img" aria-label="Aperçu du mockup généré"></canvas>
+    </main>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
