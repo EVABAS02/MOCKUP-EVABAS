@@ -1,4 +1,22 @@
 (function () {
+  // Mobile menu toggle
+  const mobileMenuBtn = document.getElementById('mk4MobileMenuBtn');
+  const sidebarMobile = document.getElementById('mk4SidebarMobile');
+  const overlay = document.getElementById('mk4Overlay');
+  
+  function toggleMobileMenu() {
+    sidebarMobile.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+  
+  function closeMobileMenu() {
+    sidebarMobile.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+  
+  mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+  overlay.addEventListener('click', closeMobileMenu);
+
   const rawPalettes = [
     // Palettes d'origine
     ['Capricorne Deep', ['#05100C', '#0B1C15', '#1B3B2B', '#FBB02D', '#4ADE80']],
@@ -67,6 +85,7 @@
     android: { w: 390, h: 844, bezel: 16, chrome: 0, r: 40 }
   };
 
+  // Initialize palettes for desktop
   document.getElementById('mk4PalCount').textContent = palettes.length;
   document.getElementById('mk4Palettes').innerHTML = palettes.map(p => `
     <div class="mk4-palette ${p.id === paletteId ? 'active' : ''}" data-pal="${p.id}">
@@ -74,13 +93,25 @@
       <div class="mk4-palette-name">${p.name}</div>
     </div>`).join('');
 
-  document.getElementById('mk4Palettes').addEventListener('click', e => {
+  // Initialize palettes for mobile
+  document.getElementById('mk4PalCountMobile').textContent = palettes.length;
+  document.getElementById('mk4PalettesMobile').innerHTML = palettes.map(p => `
+    <div class="mk4-palette ${p.id === paletteId ? 'active' : ''}" data-pal="${p.id}">
+      <div class="mk4-swatches">${p.hex.slice(0, 4).map(h => `<span style="background:${h}"></span>`).join('')}</div>
+      <div class="mk4-palette-name">${p.name}</div>
+    </div>`).join('');
+
+  function handlePaletteClick(e) {
     const p = e.target.closest('.mk4-palette');
     if (!p) return;
     paletteId = p.dataset.pal;
-    document.querySelectorAll('.mk4-palette').forEach(x => x.classList.toggle('active', x === p));
+    document.querySelectorAll('.mk4-palette').forEach(x => x.classList.toggle('active', x.dataset.pal === paletteId));
     render();
-  });
+    closeMobileMenu();
+  }
+
+  document.getElementById('mk4Palettes').addEventListener('click', handlePaletteClick);
+  document.getElementById('mk4PalettesMobile').addEventListener('click', handlePaletteClick);
 
   function roundRectPath(c, x, y, w, h, r) {
     c.beginPath();
@@ -238,28 +269,157 @@
     }
   }
 
+  // Sync mobile and desktop controls
+  function syncSelect(idDesktop, idMobile) {
+    const desktop = document.getElementById(idDesktop);
+    const mobile = document.getElementById(idMobile);
+    if (desktop && mobile) {
+      desktop.addEventListener('change', () => mobile.value = desktop.value);
+      mobile.addEventListener('change', () => { desktop.value = mobile.value; closeMobileMenu(); });
+    }
+  }
+  
+  function syncCheckbox(idDesktop, idMobile) {
+    const desktop = document.getElementById(idDesktop);
+    const mobile = document.getElementById(idMobile);
+    if (desktop && mobile) {
+      desktop.addEventListener('change', () => mobile.checked = desktop.checked);
+      mobile.addEventListener('change', () => { desktop.checked = mobile.checked; closeMobileMenu(); });
+    }
+  }
+  
+  function syncInput(idDesktop, idMobile) {
+    const desktop = document.getElementById(idDesktop);
+    const mobile = document.getElementById(idMobile);
+    if (desktop && mobile) {
+      desktop.addEventListener('input', () => mobile.value = desktop.value);
+      mobile.addEventListener('input', () => { desktop.value = mobile.value; closeMobileMenu(); });
+    }
+  }
+  
+  function syncTextArea(idDesktop, idMobile) {
+    const desktop = document.getElementById(idDesktop);
+    const mobile = document.getElementById(idMobile);
+    if (desktop && mobile) {
+      desktop.addEventListener('input', () => mobile.value = desktop.value);
+      mobile.addEventListener('input', () => { desktop.value = mobile.value; closeMobileMenu(); });
+    }
+  }
+  
+  // Sync all controls
+  syncSelect('mk4Mode', 'mk4ModeMobile');
+  syncCheckbox('mk4GlassToggle', 'mk4GlassToggleMobile');
+  syncInput('mk4Author', 'mk4AuthorMobile');
+  syncInput('mk4Badge', 'mk4BadgeMobile');
+  syncTextArea('mk4Title', 'mk4TitleMobile');
+  
+  // Sync file upload display
+  function updateUploadText(text) {
+    const desktopText = document.getElementById('mk4UploadText');
+    const mobileText = document.getElementById('mk4UploadTextMobile');
+    if (desktopText) desktopText.innerHTML = text;
+    if (mobileText) mobileText.innerHTML = text;
+  }
+  
+  // Sync export button state
+  function updateExportButtonState(disabled) {
+    const desktopBtn = document.getElementById('mk4ExportBtn');
+    const mobileBtn = document.getElementById('mk4ExportBtnMobile');
+    if (desktopBtn) desktopBtn.disabled = disabled;
+    if (mobileBtn) mobileBtn.disabled = disabled;
+  }
+  
+  // Sync device buttons
+  function updateDeviceButtons(deviceType) {
+    const allButtons = document.querySelectorAll('.mk4-btn-opt[data-device]');
+    allButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.device === deviceType);
+    });
+  }
+
   document.getElementById('mk4Mode').addEventListener('change', e => {
     mode = e.target.value;
+    document.getElementById('mk4ModeMobile').value = mode;
     const isSpecialMode = ['fullpage', 'presentation', 'trio'].includes(mode);
     document.getElementById('mk4PaletteBox').style.display = isSpecialMode ? 'block' : 'none';
     document.getElementById('mk4PresFields').style.display = isSpecialMode ? 'flex' : 'none';
     document.getElementById('mk4DeviceBox').style.display = mode === 'device' ? 'block' : 'none';
+    document.getElementById('mk4PaletteBoxMobile').style.display = isSpecialMode ? 'block' : 'none';
+    document.getElementById('mk4PresFieldsMobile').style.display = isSpecialMode ? 'flex' : 'none';
+    document.getElementById('mk4DeviceBoxMobile').style.display = mode === 'device' ? 'block' : 'none';
+    render();
+  });
+
+  document.getElementById('mk4ModeMobile').addEventListener('change', e => {
+    mode = e.target.value;
+    document.getElementById('mk4Mode').value = mode;
+    const isSpecialMode = ['fullpage', 'presentation', 'trio'].includes(mode);
+    document.getElementById('mk4PaletteBox').style.display = isSpecialMode ? 'block' : 'none';
+    document.getElementById('mk4PresFields').style.display = isSpecialMode ? 'flex' : 'none';
+    document.getElementById('mk4DeviceBox').style.display = mode === 'device' ? 'block' : 'none';
+    document.getElementById('mk4PaletteBoxMobile').style.display = isSpecialMode ? 'block' : 'none';
+    document.getElementById('mk4PresFieldsMobile').style.display = isSpecialMode ? 'flex' : 'none';
+    document.getElementById('mk4DeviceBoxMobile').style.display = mode === 'device' ? 'block' : 'none';
+    render();
+    closeMobileMenu();
+  });
+  
+  document.getElementById('mk4GlassToggle').addEventListener('change', () => {
+    document.getElementById('mk4GlassToggleMobile').checked = document.getElementById('mk4GlassToggle').checked;
     render();
   });
   
-  document.getElementById('mk4GlassToggle').addEventListener('change', render);
-  document.getElementById('mk4Badge').addEventListener('input', render);
-  document.getElementById('mk4Title').addEventListener('input', render);
-  document.getElementById('mk4Author').addEventListener('input', render);
+  document.getElementById('mk4GlassToggleMobile').addEventListener('change', () => {
+    document.getElementById('mk4GlassToggle').checked = document.getElementById('mk4GlassToggleMobile').checked;
+    render();
+    closeMobileMenu();
+  });
+  
+  document.getElementById('mk4Badge').addEventListener('input', () => {
+    document.getElementById('mk4BadgeMobile').value = document.getElementById('mk4Badge').value;
+    render();
+  });
+  
+  document.getElementById('mk4BadgeMobile').addEventListener('input', () => {
+    document.getElementById('mk4Badge').value = document.getElementById('mk4BadgeMobile').value;
+    render();
+    closeMobileMenu();
+  });
+  
+  document.getElementById('mk4Title').addEventListener('input', () => {
+    document.getElementById('mk4TitleMobile').value = document.getElementById('mk4Title').value;
+    render();
+  });
+  
+  document.getElementById('mk4TitleMobile').addEventListener('input', () => {
+    document.getElementById('mk4Title').value = document.getElementById('mk4TitleMobile').value;
+    render();
+    closeMobileMenu();
+  });
+  
+  document.getElementById('mk4Author').addEventListener('input', () => {
+    document.getElementById('mk4AuthorMobile').value = document.getElementById('mk4Author').value;
+    render();
+  });
+  
+  document.getElementById('mk4AuthorMobile').addEventListener('input', () => {
+    document.getElementById('mk4Author').value = document.getElementById('mk4AuthorMobile').value;
+    render();
+    closeMobileMenu();
+  });
 
-  document.getElementById('mk4Devices').addEventListener('click', e => {
+  function handleDeviceClick(e) {
     const b = e.target.closest('.mk4-btn-opt');
     if (b) { 
       device = b.dataset.device; 
-      document.querySelectorAll('.mk4-btn-opt').forEach(x => x.classList.toggle('active', x === b)); 
+      updateDeviceButtons(device);
       render(); 
+      closeMobileMenu();
     }
-  });
+  }
+  
+  document.getElementById('mk4Devices').addEventListener('click', handleDeviceClick);
+  document.getElementById('mk4DevicesMobile').addEventListener('click', handleDeviceClick);
 
   const dropZone = document.getElementById('mk4DropZone');
   window.addEventListener('dragover', e => { e.preventDefault(); dropZone?.classList.remove('hidden'); });
@@ -271,6 +431,7 @@
   });
   
   document.getElementById('mk4File').addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); });
+  document.getElementById('mk4FileMobile').addEventListener('change', e => { if(e.target.files[0]) processFile(e.target.files[0]); });
 
   function processFile(file) {
     const reader = new FileReader();
@@ -278,8 +439,8 @@
       const img = new Image();
       img.onload = () => {
         currentImage = img;
-        document.getElementById('mk4UploadText').innerHTML = `<b>${file.name.slice(0, 18)}...</b><br/>Image chargée`;
-        document.getElementById('mk4ExportBtn').disabled = false;
+        updateUploadText(`<b>${file.name.slice(0, 18)}...</b><br/>Image chargée`);
+        updateExportButtonState(false);
         render();
       };
       img.src = evt.target.result;
@@ -287,13 +448,17 @@
     reader.readAsDataURL(file);
   }
 
-  document.getElementById('mk4ExportBtn').addEventListener('click', () => {
+  function exportImage() {
     if (!currentImage) return;
     const link = document.createElement('a'); 
     link.download = `mockup-${mode}-${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png'); 
     link.click();
-  });
+    closeMobileMenu();
+  }
+  
+  document.getElementById('mk4ExportBtn').addEventListener('click', exportImage);
+  document.getElementById('mk4ExportBtnMobile').addEventListener('click', exportImage);
 
   render();
 })();
